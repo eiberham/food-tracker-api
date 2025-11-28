@@ -1,0 +1,11 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+vars = {
+    "db_url": os.getenv("DB_URL"),
+    "jwt_secret_key": os.getenv("JWT_SECRET_KEY"),
+    "jwt_algorithm": os.getenv("JWT_ALGORITHM"),
+    "access_token_expire_minutes": int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)),
+}

@@ -88,3 +88,4 @@ Thumbs.db
 # FastAPI specific
 .pytest_cache/
 .mypy_cache/
+test.py
