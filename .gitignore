@@ -89,3 +89,4 @@ Thumbs.db
 .pytest_cache/
 .mypy_cache/
 test.py
+queries.txt

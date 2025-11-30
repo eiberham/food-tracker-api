@@ -1,8 +1,10 @@
 from pydantic import BaseModel
+from typing import List
 
 class MealBase(BaseModel):
-    food_id: int
     user_id: int
+    name: str
+    food_ids: List[int]
 
 class MealCreate(MealBase):
     pass
