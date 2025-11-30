@@ -37,5 +37,4 @@ async def delete_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
     success = UserService.delete_user(db, user_id)
     if success:
         return {"message": f"User with ID {user_id} deleted"}
-    else:
-        raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=404, detail="User not found")

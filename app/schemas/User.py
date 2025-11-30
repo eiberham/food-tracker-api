@@ -12,10 +12,7 @@ class UserCreate(UserBase):
     password: str
 
 class UserUpdate(BaseModel):
-    username: Optional[str] = None
-    name: Optional[str] = None
-    lastname: Optional[str] = None
-    email: Optional[EmailStr] = None
+    pass
 
 class UserResponse(UserBase):
     id: int
