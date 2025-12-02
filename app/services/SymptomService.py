@@ -2,6 +2,7 @@ from app.models.Symptom import Symptom
 from app.schemas.Symptom import SymptomCreate, SymptomUpdate
 from app.services.MealService import MealService
 from app.services.UserService import UserService
+from datetime import date
 
 class SymptomService:
 
@@ -54,3 +55,12 @@ class SymptomService:
         db.delete(symptom)
         db.commit()
         return True
+    
+    @classmethod
+    def get_symptoms_of_date(cls, db, user_id: int, target_date: date):
+        from sqlalchemy import func
+        symptoms = db.query(Symptom).filter(
+            Symptom.user_id == user_id,
+            func.date(Symptom.datetime) == target_date
+        ).all()
+        return symptoms

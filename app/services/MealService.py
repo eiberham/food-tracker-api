@@ -3,6 +3,7 @@ from app.models.MealFood import MealFood
 from app.schemas.Meal import MealCreate, MealUpdate
 from app.services.FoodService import FoodService
 from app.services.UserService import UserService
+from datetime import date
 
 class MealService:
     
@@ -47,7 +48,7 @@ class MealService:
                     raise Exception(f"Food with ID {food_id} does not exist")
                 
             meal.meal_foods.clear()
-            
+
             for food_id in payload.food_ids:
                 meal.meal_foods.append(MealFood(food_id=food_id))
         
@@ -78,3 +79,13 @@ class MealService:
         if not meal:
             return None
         return meal
+    
+    @classmethod
+    def get_meals_of_date(cls, db, user_id: int, target_date: date):
+        from sqlalchemy import func
+        meals = db.query(Meal).filter(
+            Meal.user_id == user_id,
+            func.date(Meal.created_at) == target_date
+        ).all()
+        return meals
+
