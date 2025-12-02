@@ -80,8 +80,8 @@ class MealService:
             return None
         return meal
     
-    @classmethod
-    def get_meals_of_date(cls, db, user_id: int, target_date: date):
+    @staticmethod
+    def get_meals_of_date(db, user_id: int, target_date: date):
         from sqlalchemy import func
         meals = db.query(Meal).filter(
             Meal.user_id == user_id,
@@ -89,3 +89,4 @@ class MealService:
         ).all()
         return meals
 
+get_meals_of_date = MealService.get_meals_of_date

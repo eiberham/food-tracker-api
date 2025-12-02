@@ -56,11 +56,14 @@ class SymptomService:
         db.commit()
         return True
     
-    @classmethod
-    def get_symptoms_of_date(cls, db, user_id: int, target_date: date):
+    @staticmethod
+    def get_symptoms_of_date(db, user_id: int, target_date: date):
         from sqlalchemy import func
         symptoms = db.query(Symptom).filter(
             Symptom.user_id == user_id,
             func.date(Symptom.datetime) == target_date
         ).all()
         return symptoms
+    
+
+get_symptoms_of_date = SymptomService.get_symptoms_of_date
