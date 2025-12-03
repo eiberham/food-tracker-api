@@ -2,6 +2,7 @@ from jose import jwt
 from datetime import datetime, timedelta, timezone
 import bcrypt
 import app.config as config
+from sqlalchemy.orm import Session
 
 from app.models.User import User
 
@@ -21,7 +22,7 @@ class AuthService:
         return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
     
     @classmethod
-    def login(cls, db, username: str, password: str):
+    def login(cls, db: Session, username: str, password: str):
         user = db.query(User).filter(User.username == username).first()
         if not user:
             return None

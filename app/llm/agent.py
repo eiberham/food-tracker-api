@@ -2,8 +2,9 @@ from langchain.agents import create_agent
 from app.llm.tools import get_tools
 from app.llm.model import llm
 from app.llm.prompt import prompt
+from sqlalchemy.orm import Session
 
-def create(db, user_id: int):
+def create(db: Session, user_id: int):
 
     bound_tools = get_tools(db=db, user_id=user_id)
     

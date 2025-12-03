@@ -3,16 +3,17 @@ from app.schemas.Symptom import SymptomCreate, SymptomUpdate
 from app.services.MealService import MealService
 from app.services.UserService import UserService
 from datetime import date
+from sqlalchemy.orm import Session
 
 class SymptomService:
 
     @classmethod
-    def list_symptoms(cls, db):
+    def list_symptoms(cls, db: Session):
         symptoms = db.query(Symptom).all()
         return symptoms
 
     @classmethod
-    def create_symptom(cls, db, payload: SymptomCreate):
+    def create_symptom(cls, db: Session, payload: SymptomCreate):
         symptom = Symptom(**payload.model_dump())
 
         if not UserService.get_user_by_id(db, payload.user_id):
@@ -27,7 +28,7 @@ class SymptomService:
         return symptom
     
     @classmethod
-    def update_symptom(cls, db, symptom_id: int, payload: SymptomUpdate):
+    def update_symptom(cls, db: Session, symptom_id: int, payload: SymptomUpdate):
         symptom = cls.get_symptom_by_id(db, symptom_id)
         if not symptom:
             return None
@@ -40,14 +41,14 @@ class SymptomService:
         return symptom
     
     @classmethod
-    def get_symptom_by_id(cls, db, symptom_id: int):
+    def get_symptom_by_id(cls, db: Session, symptom_id: int):
         symptom = db.query(Symptom).filter_by(id=symptom_id).first()
         if not symptom:
             return None
         return symptom
     
     @classmethod
-    def delete_symptom(cls, db, symptom_id: int):
+    def delete_symptom(cls, db: Session, symptom_id: int):
         symptom = cls.get_symptom_by_id(db, symptom_id)
         if not symptom:
             return False
@@ -57,7 +58,7 @@ class SymptomService:
         return True
     
     @staticmethod
-    def get_symptoms_of_date(db, user_id: int, target_date: date):
+    def get_symptoms_of_date(db: Session, user_id: int, target_date: date):
         from sqlalchemy import func
         symptoms = db.query(Symptom).filter(
             Symptom.user_id == user_id,

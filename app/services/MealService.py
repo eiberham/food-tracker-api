@@ -4,16 +4,17 @@ from app.schemas.Meal import MealCreate, MealUpdate
 from app.services.FoodService import FoodService
 from app.services.UserService import UserService
 from datetime import date
+from sqlalchemy.orm import Session
 
 class MealService:
     
     @classmethod
-    def list_meals(cls, db):
+    def list_meals(cls, db: Session):
         meals = db.query(Meal).all()
         return meals
     
     @classmethod
-    def create_meal(cls, db, payload: MealCreate):
+    def create_meal(cls, db: Session, payload: MealCreate):
         meal = Meal(**payload.model_dump(exclude={"food_ids"}))
 
         if not UserService.get_user_by_id(db, meal.user_id):
@@ -31,7 +32,7 @@ class MealService:
         return meal
     
     @classmethod
-    def update_meal(cls, db, meal_id: int, payload: MealUpdate):
+    def update_meal(cls, db: Session, meal_id: int, payload: MealUpdate):
         meal = cls.get_meal_by_id(db, meal_id)
         if not meal:
             return None
@@ -57,14 +58,14 @@ class MealService:
         return meal
     
     @classmethod
-    def get_meal(cls, db, meal_id: int):
+    def get_meal(cls, db: Session, meal_id: int):
         meal = cls.get_meal_by_id(db, meal_id)
         if not meal:
             return None
         return meal
     
     @classmethod
-    def delete_meal(cls, db, meal_id: int):
+    def delete_meal(cls, db: Session, meal_id: int):
         meal = cls.get_meal_by_id(db, meal_id)
         if not meal:
             return False
@@ -74,14 +75,14 @@ class MealService:
         return True
 
     @classmethod
-    def get_meal_by_id(cls, db, meal_id: int):
+    def get_meal_by_id(cls, db: Session, meal_id: int):
         meal = db.query(Meal).filter_by(id=meal_id).first()
         if not meal:
             return None
         return meal
     
     @staticmethod
-    def get_meals_of_date(db, user_id: int, target_date: date):
+    def get_meals_of_date(db: Session, user_id: int, target_date: date):
         from sqlalchemy import func
         meals = db.query(Meal).filter(
             Meal.user_id == user_id,
