@@ -8,11 +8,11 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     yield
 
-app = FastAPI(title="Food Tracker API", version="v1", lifespan=lifespan)
+app = FastAPI(title="Food Tracker", version="v1", lifespan=lifespan)
 
 app.include_router(router)
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def read_root():
     return "Welcome to the food tracker api."
 

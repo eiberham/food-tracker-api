@@ -1,7 +1,10 @@
 from langchain_core.tools import tool
+from sentence_transformers import SentenceTransformer
 from app.services.meal_service import MealService
 from app.services.symptom_service import SymptomService
+from app.services.retriever_service import RetrieverService
 from datetime import date
+import app.config as config
 import json
 
 def get_tools(db, user_id: int):
@@ -60,4 +63,28 @@ def get_tools(db, user_id: int):
         
         return json.dumps(result, indent=2)
     
-    return [get_meals_of_date, get_symptoms_of_date]
+    @tool(description="Search relevant documents based on a query")
+    def search_docs(query: str) -> str:
+        """Search relevant documents based on a query.  
+        
+        Args:
+            query: The search query string.
+
+        Returns:
+            A string containing the search results.
+        """
+
+        supabase_url = config.vars["supabase_url"]
+        supabase_key = config.vars["supabase_key"]
+
+        model = SentenceTransformer('BAAI/bge-small-en')
+        vector = model.encode(query)
+
+        retriever = RetrieverService(supabase_url, supabase_key)
+        results = retriever.search(embedding=vector.tolist(), match_count=5)
+
+        context = "".join([result['content'] for result in results])
+        return context
+
+    
+    return [get_meals_of_date, get_symptoms_of_date, search_docs]
