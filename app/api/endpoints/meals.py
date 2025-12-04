@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from typing import Annotated
-from app.services.MealService import MealService
-from app.schemas.Meal import MealCreate, MealUpdate
+from app.services.meal_service import MealService
+from app.schemas.meal import MealCreate, MealUpdate
 
 router = APIRouter()
 

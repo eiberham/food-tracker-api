@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, UploadFile, HTTPException
-from app.services.DocsService import DocsService
+from app.services.docs_service import DocsService
 from app.database import get_db
 from typing import Annotated
 from sqlalchemy.orm import Session

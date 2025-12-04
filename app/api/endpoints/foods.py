@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
-from app.services.FoodService import FoodService
-from app.schemas.Food import FoodCreate, FoodUpdate
+from app.services.food_service import FoodService
+from app.schemas.food import FoodCreate, FoodUpdate
 from app.database import get_db
 from sqlalchemy.orm import Session
 

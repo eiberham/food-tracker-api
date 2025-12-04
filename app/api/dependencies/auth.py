@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 import app.config as config
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.services.UserService import UserService
+from app.services.user_service import UserService
 
 security = HTTPBearer()
 

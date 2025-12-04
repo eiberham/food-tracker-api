@@ -1,6 +1,6 @@
 from langchain_core.tools import tool
-from app.services.MealService import MealService
-from app.services.SymptomService import SymptomService
+from app.services.meal_service import MealService
+from app.services.symptom_service import SymptomService
 from datetime import date
 import json
 

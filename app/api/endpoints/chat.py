@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from app.api.dependencies.auth import verify_token
-from app.schemas.ChatMsg import ChatMsg
-from app.services.ChatService import ChatService
+from app.schemas.chat_msg import ChatMsg
+from app.services.chat_service import ChatService
 from app.database import get_db
 
 router = APIRouter()

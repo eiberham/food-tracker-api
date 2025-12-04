@@ -1,8 +1,8 @@
-from app.models.Meal import Meal
-from app.models.MealFood import MealFood
-from app.schemas.Meal import MealCreate, MealUpdate
-from app.services.FoodService import FoodService
-from app.services.UserService import UserService
+from app.models.meal import Meal
+from app.models.meal_food import MealFood
+from app.schemas.meal import MealCreate, MealUpdate
+from app.services.food_service import FoodService
+from app.services.user_service import UserService
 from datetime import date
 from sqlalchemy.orm import Session
 

@@ -1,6 +1,6 @@
 import bcrypt
-from app.schemas.User import UserCreate, UserUpdate, UserResponse
-from app.models.User import User
+from app.schemas.user import UserCreate, UserUpdate
+from app.models.user import User
 from sqlalchemy.orm import Session
 
 class UserService:

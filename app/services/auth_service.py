@@ -4,7 +4,7 @@ import bcrypt
 import app.config as config
 from sqlalchemy.orm import Session
 
-from app.models.User import User
+from app.models.user import User
 
 class AuthService:
 

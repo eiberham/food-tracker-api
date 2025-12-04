@@ -1,7 +1,7 @@
-from app.models.Symptom import Symptom
-from app.schemas.Symptom import SymptomCreate, SymptomUpdate
-from app.services.MealService import MealService
-from app.services.UserService import UserService
+from app.models.symptom import Symptom
+from app.schemas.symptom import SymptomCreate, SymptomUpdate
+from app.services.meal_service import MealService
+from app.services.user_service import UserService
 from datetime import date
 from sqlalchemy.orm import Session
 

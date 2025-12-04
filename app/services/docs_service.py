@@ -1,7 +1,7 @@
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from langchain_community.document_loaders import PyPDFLoader
-from app.models.Document import Document
+from app.models.document import Document
 from sentence_transformers import SentenceTransformer
 import tempfile
 

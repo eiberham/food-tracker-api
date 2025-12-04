@@ -1,5 +1,5 @@
-from app.schemas.Food import FoodCreate, FoodUpdate
-from app.models.Food import Food
+from app.schemas.food import FoodCreate, FoodUpdate
+from app.models.food import Food
 from sqlalchemy.orm import Session
 class FoodService:
 

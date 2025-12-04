@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 
 from app.database import get_db
-from app.services.UserService import UserService
-from app.schemas.User import UserCreate, UserUpdate
+from app.services.user_service import UserService
+from app.schemas.user import UserCreate, UserUpdate
 
 router = APIRouter()
 
