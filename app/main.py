@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
+import redis.asyncio as redis
 import app.config as config
 
 from contextlib import asynccontextmanager
@@ -10,7 +11,8 @@ from app.database import engine, Base
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-    await FastAPILimiter.init(redis_url=config.vars["redis_url"])
+    redis_client = redis.from_url(config.vars['redis_url'], encoding="utf-8", decode_responses=True)
+    await FastAPILimiter.init(redis=redis_client)
     yield
 
 app = FastAPI(title="Food Tracker", version="v1", lifespan=lifespan)

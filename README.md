@@ -70,6 +70,14 @@ CREATE TABLE public.user (
 );
 ```
 
+### Deployment
+
+You can deploy it to railway by conteinerizing the application, pushing it to dockerhub and then pulling it from there.
+
+```shell
+docker buildx build --platform linux/amd64,linux/arm64 -t username/food-tracker:v1.0 --push .
+```
+
 ### How to run it locally ?
 
 Clone the repository
