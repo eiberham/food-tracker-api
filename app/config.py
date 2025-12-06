@@ -11,4 +11,5 @@ vars = {
     "groq_api_key": os.getenv("GROQ_API_KEY"),
     "supabase_url": os.getenv("SUPABASE_URL"),
     "supabase_key": os.getenv("SUPABASE_KEY"),
+    "redis_url": os.getenv("REDIS_URL"),
 }
