@@ -81,10 +81,11 @@ def get_tools(db, user_id: int):
         vector = model.encode(query)
 
         retriever = RetrieverService(supabase_url, supabase_key)
-        results = retriever.search(embedding=vector.tolist(), match_count=5)
+        results = retriever.search(embedding=vector.tolist(), match_count=3)
 
         context = "".join([result['content'] for result in results])
-        return context
+        # Limit context to prevent token overflow
+        return context[:2000] + "..." if len(context) > 2000 else context
 
     
     return [get_meals_of_date, get_symptoms_of_date, search_docs]

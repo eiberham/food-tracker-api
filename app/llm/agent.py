@@ -7,6 +7,8 @@ from app.llm.model import llm
 from app.llm.prompt import prompt
 from sqlalchemy.orm import Session
 
+from app.api.middlewares.monitor_guardrail import MonitorGuardrailMiddleware
+
 @traceable
 def create(db: Session, user_id: int):
 
@@ -16,7 +18,8 @@ def create(db: Session, user_id: int):
         model=llm,
         tools=bound_tools,
         system_prompt=prompt,
-        checkpointer=InMemorySaver()
+        checkpointer=InMemorySaver(),
+        middleware=[MonitorGuardrailMiddleware()]
     )
     
     return agent
