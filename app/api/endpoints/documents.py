@@ -6,7 +6,15 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-@router.post("/", status_code=status.HTTP_201_CREATED )
+@router.post("/", 
+    status_code=status.HTTP_201_CREATED,
+    summary="Upload and Process Document",
+    description="""
+        Upload a document file (PDF) to be processed and stored.
+        Supported formats: PDF.
+        The document will be parsed and relevant data extracted for later use.
+    """
+)
 async def load_document(file: UploadFile, db: Annotated[Session, Depends(get_db)]):
     try: 
         response = DocsService.process(db, file)

@@ -12,8 +12,14 @@ Features:
 - Agentic RAG ( tool invocation + retrieval )
 - Authentication and per-user data isolation
 - SQLAlchemy models + Pydantic schemas
+- Chat endpoint with streaming to improve the perceived responsivenes by creating a faster, more fluid, and human-like interaction.
+- Guardrails for monitoring agent work
 
 ### Supabase schema
+
+This is the database squema used to support the back-end. You can create a sql script to massively insert records into each table and play around with the chat endpoint to see how the model drives conclusions based on the existing data.
+
+### 
 
 ```sql
 
