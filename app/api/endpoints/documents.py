@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, UploadFile, HTTPException
 from app.services.docs_service import DocsService
 from app.database import get_db
 from typing import Annotated
-from sqlalchemy.orm import Session
+from supabase.client import Client
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ router = APIRouter()
         The document will be parsed and relevant data extracted for later use.
     """
 )
-async def load_document(file: UploadFile, db: Annotated[Session, Depends(get_db)]):
+async def load_document(file: UploadFile, db: Annotated[Client, Depends(get_db)]):
     try: 
         response = DocsService.process(db, file)
         return response

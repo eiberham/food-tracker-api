@@ -9,7 +9,9 @@ vars = {
     "jwt_algorithm": os.getenv("JWT_ALGORITHM"),
     "access_token_expire_minutes": int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)),
     "groq_api_key": os.getenv("GROQ_API_KEY"),
+    "openai_api_key": os.getenv("OPENAI_API_KEY"),
     "supabase_url": os.getenv("SUPABASE_URL"),
-    "supabase_key": os.getenv("SUPABASE_KEY"),
+    "supabase_secret_key": os.getenv("SUPABASE_SECRET_KEY"),
+    "supabase_anon_key": os.getenv("SUPABASE_ANON_KEY"),
     "redis_url": os.getenv("REDIS_URL"),
 }

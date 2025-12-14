@@ -9,20 +9,20 @@ curl -N -X POST 'http://localhost:8000/chat/' \
 
 
 from app.llm.agent import create
-from sqlalchemy.orm import Session
+from supabase.client import Client
 
 class ChatService:
     
     @classmethod
-    def chat(cls, db: Session, user_id:int, message: str):
+    def chat(cls, db: Client, message: str):
         try:
             
-            agent = create(db, user_id)
+            agent = create(db)
 
             def stream():
                 for chunk in agent.stream(
                     {"messages": [{"role": "user", "content": message}]}, 
-                    config={"configurable": {"thread_id": f"user_{user_id}"}},
+                    config={"configurable": {"thread_id": "1"}},
                     stream_mode="updates"
                 ):
                     yield f"data: {chunk}\n\n"

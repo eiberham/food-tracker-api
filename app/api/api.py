@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends
 from fastapi_limiter.depends import RateLimiter
-from app.api.endpoints import foods, users, login, meals, symptoms, chat, documents
-from app.api.dependencies.auth import verify_token
+from app.api.endpoints import auth, foods, meals, symptoms, chat, documents
+from app.api.dependencies.auth import verify_supabase_token
 
 router = APIRouter()
-router.include_router(login.router, prefix="/login", tags=["login"], dependencies=[Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(foods.router, prefix="/foods", tags=["foods"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(users.router, prefix="/users", tags=["users"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(meals.router, prefix="/meals", tags=["meals"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(symptoms.router, prefix="/symptoms", tags=["symptoms"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(chat.router, prefix="/chat", tags=["chat"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
-router.include_router(documents.router, prefix="/documents", tags=["documents"], dependencies=[Depends(verify_token), Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(auth.router, prefix="/login", tags=["login"], dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(foods.router, prefix="/foods", tags=["foods"], dependencies=[Depends(verify_supabase_token), Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(meals.router, prefix="/meals", tags=["meals"], dependencies=[Depends(verify_supabase_token), Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(symptoms.router, prefix="/symptoms", tags=["symptoms"], dependencies=[Depends(verify_supabase_token), Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(chat.router, prefix="/chat", tags=["chat"], dependencies=[Depends(verify_supabase_token), Depends(RateLimiter(times=5, seconds=60))])
+router.include_router(documents.router, prefix="/documents", tags=["documents"], dependencies=[Depends(RateLimiter(times=5, seconds=60))])

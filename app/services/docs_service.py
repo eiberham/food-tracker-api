@@ -1,7 +1,7 @@
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from langchain_community.document_loaders import PyPDFLoader
-from app.models.document import Document
+from app.schemas.document import Document
 from sentence_transformers import SentenceTransformer
 import tempfile
 
@@ -28,15 +28,13 @@ class DocsService:
             document = Document(
                 filename=file.filename, 
                 content=content, 
-                embedding=vector,   
+                embedding=vector.tolist(), 
                 meta=meta
             )
 
-            db.add(document)
-            db.commit()
-            db.refresh(document)
+            result = db.table("document").insert(document.model_dump()).execute()
 
-            return {"document_id": document.id, "filename": document.filename}
+            return {"document_id": result.data[0]['id'], "filename": document.filename}
 
         except Exception as e:
             print(f"Error processing document: {e}")
