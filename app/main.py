@@ -21,4 +21,8 @@ app.include_router(router)
 async def read_root():
     return "Welcome to the food tracker api."
 
+@app.get("/health", include_in_schema=False, dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def health_check():
+    return {"status": "ok"}
+
 

@@ -39,6 +39,7 @@ httpx-sse==0.4.3
 huggingface-hub==0.36.0
 hyperframe==6.1.0
 idna==3.11
+iniconfig==2.3.0
 Jinja2==3.1.6
 jiter==0.12.0
 joblib==1.5.2
@@ -72,6 +73,7 @@ ormsgpack==1.12.0
 packaging==25.0
 pgvector==0.4.1
 pillow==12.0.0
+pluggy==1.6.0
 postgrest==2.25.0
 propcache==0.4.1
 psycopg2-binary==2.9.11
@@ -83,6 +85,7 @@ pydantic_core==2.41.5
 Pygments==2.19.2
 PyJWT==2.10.1
 pypdf==6.4.0
+pytest==9.0.2
 python-dotenv==1.2.1
 python-jose==3.5.0
 python-multipart==0.0.20
