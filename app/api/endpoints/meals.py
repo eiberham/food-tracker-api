@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from supabase.client import Client
+from app.database import get_authenticated_db
 from typing import Annotated
 from app.services.meal_service import MealService
-from app.schemas.meal import MealCreate, MealUpdate
+from app.schemas.meal import MealCreate, MealUpdate, MealResponse
 
 router = APIRouter()
 
@@ -12,19 +12,20 @@ router = APIRouter()
     summary="List All Meals",
     description="Retrieve a list of all meal entries stored in the system."
 )
-async def list_meals(db: Annotated[Session, Depends(get_db)]):
+def list_meals(request: Request, db: Annotated[Client, Depends(get_authenticated_db)]):
     meals = MealService.list_meals(db)
     return {"meals": meals}
 
 @router.post("/", 
     status_code=status.HTTP_201_CREATED,
     summary="Create a New Meal",
-    description="Add a new meal entry to the system."
+    description="Add a new meal entry to the system.",
+    response_model=MealResponse
 )
-async def create_meal(meal: MealCreate, db: Annotated[Session, Depends(get_db)]):
+def create_meal(meal: MealCreate, request: Request, db: Annotated[Client, Depends(get_authenticated_db)]):
     try:
-        meal = MealService.create_meal(db, meal)
-        return {"message": "Meal created", "meal": meal}
+        meal_data = MealService.create_meal(db, meal)
+        return meal_data
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
@@ -33,7 +34,7 @@ async def create_meal(meal: MealCreate, db: Annotated[Session, Depends(get_db)])
     summary="Update an Existing Meal",
     description="Update the details of an existing meal entry by its ID."
 )
-async def update_meal(meal_id: int, meal: MealUpdate, db: Annotated[Session, Depends(get_db)]):
+def update_meal(meal_id: int, meal: MealUpdate, request: Request, db: Annotated[Client, Depends(get_authenticated_db)]):
     try:
         meal = MealService.update_meal(db, meal_id, meal)
         if not meal:
@@ -47,7 +48,7 @@ async def update_meal(meal_id: int, meal: MealUpdate, db: Annotated[Session, Dep
     summary="Get Meal by ID",
     description="Retrieve the details of a specific meal entry by its ID."
 )
-async def read_meal(meal_id: int, db: Annotated[Session, Depends(get_db)]):
+def read_meal(meal_id: int, request: Request, db: Annotated[Client, Depends(get_authenticated_db)]):
     meal = MealService.get_meal(db, meal_id)
     if not meal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meal not found")
@@ -58,7 +59,7 @@ async def read_meal(meal_id: int, db: Annotated[Session, Depends(get_db)]):
     summary="Delete Meal by ID",
     description="Delete a specific meal entry by its ID."
 )
-async def delete_meal(meal_id: int, db: Annotated[Session, Depends(get_db)]):
+def delete_meal(meal_id: int, request: Request, db: Annotated[Client, Depends(get_authenticated_db)]):
     success = MealService.delete_meal(db, meal_id)
     if success:
         return {"message": f"Meal with ID {meal_id} deleted"}

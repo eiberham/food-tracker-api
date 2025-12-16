@@ -1,13 +1,20 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class MealBase(BaseModel):
-    user_id: int
     name: str
-    food_ids: List[int]
+    food_ids: List[int] = []
 
 class MealCreate(MealBase):
     pass
 
 class MealUpdate(BaseModel):
-    pass
+    name: Optional[str] = None
+    food_ids: Optional[List[int]] = None
+
+class MealResponse(BaseModel):
+    id: int
+    name: str
+    user_id: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None

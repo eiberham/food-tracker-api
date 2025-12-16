@@ -7,7 +7,7 @@ from datetime import date
 import app.config as config
 import json
 
-def get_tools(db, user_id: int):
+def get_tools(db):
     @tool(description="Retrieve all meals logged by a user on a specific date")
     def get_meals_of_date(target_date: date):
         """Retrieve all meals logged by a user on a specific date.
@@ -18,7 +18,7 @@ def get_tools(db, user_id: int):
         Returns:
             String containing meals data for the specified date
         """
-        meals = MealService.get_meals_of_date(db, user_id, target_date)
+        meals = MealService.get_meals_of_date(db, target_date)
         if not meals:
             return f"No meals found for {target_date}"
         
@@ -45,7 +45,7 @@ def get_tools(db, user_id: int):
         Returns:
             String containing symptoms data for the specified date
         """
-        symptoms = SymptomService.get_symptoms_of_date(db, user_id, target_date)
+        symptoms = SymptomService.get_symptoms_of_date(db, target_date)
         if not symptoms:
             return f"No symptoms found for {target_date}"
         
@@ -75,12 +75,12 @@ def get_tools(db, user_id: int):
         """
 
         supabase_url = config.vars["supabase_url"]
-        supabase_key = config.vars["supabase_key"]
+        supabase_secret_key = config.vars["supabase_secret_key"]
 
         model = SentenceTransformer('BAAI/bge-small-en')
         vector = model.encode(query)
 
-        retriever = RetrieverService(supabase_url, supabase_key)
+        retriever = RetrieverService(supabase_url, supabase_secret_key)
         results = retriever.search(embedding=vector.tolist(), match_count=3)
 
         context = "".join([result['content'] for result in results])

@@ -1,24 +1,25 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 import app.config as config
+from supabase import create_client
+from fastapi import Request
 
-DATABASE_URL = config.vars["db_url"]
+# Supabase client for all database operations
+db = create_client(
+    config.vars["supabase_url"],
+    config.vars["supabase_anon_key"]
+)
 
-#sqlalchemy setup
-engine = create_engine(DATABASE_URL)
-
-#session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-#base class for orm models
-Base = declarative_base()
-
-#dependency to get db session per request
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    """Returns Supabase client for all operations"""
+    return db
 
+def get_authenticated_db(request: Request):
+    """Returns authenticated Supabase client when used with router-level auth"""
+    client = db
+    
+    # Get auth header from request
+    auth_header = request.headers.get("authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        client.postgrest.auth(token)
+    
+    return client

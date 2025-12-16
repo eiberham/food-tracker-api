@@ -1,33 +1,23 @@
-from jose import jwt
-from datetime import datetime, timedelta, timezone
-import bcrypt
-import app.config as config
-from sqlalchemy.orm import Session
-
-from app.models.user import User
+from app.database import db
+from app.schemas.auth import AuthenticationResponse, AuthenticationUser
 
 class AuthService:
+     
+    @classmethod
+    def login(cls, email: str, password: str):
+        response = db.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
 
-    @classmethod
-    def create_jwt(cls, user_id: int) -> str:
-        payload = {
-            "sub": str(user_id),
-            "exp": datetime.now(timezone.utc) + timedelta(minutes=config.vars['access_token_expire_minutes'])
-        }
-        token = jwt.encode(payload, config.vars['jwt_secret_key'], algorithm=config.vars['jwt_algorithm'])
-        return token
-    
-    @classmethod
-    def check_password(cls, password, hashed: str) -> bool:
-        return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
-    
-    @classmethod
-    def login(cls, db: Session, username: str, password: str):
-        user = db.query(User).filter(User.username == username).first()
-        if not user:
-            return None
+        if response.session is None:
+            raise Exception("No session returned")
 
-        if cls.check_password(password, user.password):
-            token = cls.create_jwt(user.id)
-            return token
-        return None
+        response = AuthenticationResponse(
+            access_token = response.session.access_token,
+            refresh_token= response.session.refresh_token,
+            expires_in= response.session.expires_in,
+            user= AuthenticationUser(id=response.user.id, email=response.user.email)
+        )
+
+        return response

@@ -6,11 +6,9 @@ import app.config as config
 
 from contextlib import asynccontextmanager
 from app.api.api import router
-from app.database import engine, Base
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)
     redis_client = redis.from_url(config.vars['redis_url'], encoding="utf-8", decode_responses=True)
     await FastAPILimiter.init(redis=redis_client)
     yield
