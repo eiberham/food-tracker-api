@@ -23,9 +23,6 @@ class FoodService:
         if not food:
             return None
         
-        for key, value in payload.model_dump().items():
-            setattr(food, key, value)
-        
         data = payload.model_dump(exclude_unset=True)
         food = db.table("food").update(data).eq("id", food_id).select("*").execute()
         return food
