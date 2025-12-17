@@ -2,12 +2,18 @@ name: CI
 
 on:
     push:
-        branches: [ main]
+        branches: [ main ]
     pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
 
     steps:
     - uses: actions/checkout@v4
