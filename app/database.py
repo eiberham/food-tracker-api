@@ -2,19 +2,29 @@ import app.config as config
 from supabase import create_client
 from fastapi import Request
 
-# Supabase client for all database operations
-db = create_client(
+# Supabase anon client for user operations
+anon_db = create_client(
     config.vars["supabase_url"],
     config.vars["supabase_anon_key"]
 )
 
-def get_db():
-    """Returns Supabase client for all operations"""
-    return db
+# Supabase system client for admin operations
+adm_db = create_client(
+    config.vars["supabase_url"],
+    config.vars["supabase_secret_key"]
+)
 
-def get_authenticated_db(request: Request):
+def get_adm_db():
+    """Returns Supabase admin client for admin operations"""
+    return adm_db
+
+def get_anon_db():
+    """Returns Supabase client for user level operations"""
+    return anon_db
+
+def get_auth_db(request: Request):
     """Returns authenticated Supabase client when used with router-level auth"""
-    client = db
+    client = get_anon_db()
     
     # Get auth header from request
     auth_header = request.headers.get("authorization")

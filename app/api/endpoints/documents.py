@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, UploadFile, HTTPException
 from app.services.docs_service import DocsService
-from app.database import get_db
+from app.database import get_auth_db
 from typing import Annotated
 from supabase.client import Client
 
@@ -15,7 +15,7 @@ router = APIRouter()
         The document will be parsed and relevant data extracted for later use.
     """
 )
-async def load_document(file: UploadFile, db: Annotated[Client, Depends(get_db)]):
+async def load_document(file: UploadFile, db: Annotated[Client, Depends(get_auth_db)]):
     try: 
         response = DocsService.process(db, file)
         return response

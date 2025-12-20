@@ -1,7 +1,8 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Header
 from typing import Annotated
-from app.database import get_db
+from app.database import get_anon_db, get_adm_db
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import app.config as config
 
 security = HTTPBearer()
 
@@ -14,7 +15,7 @@ async def verify_supabase_token(credentials: Annotated[HTTPAuthorizationCredenti
 
         try:
             # Create authenticated client
-            db = get_db()
+            db = get_anon_db()
             db.postgrest.auth(token)
             
             # Verify the token
@@ -31,3 +32,13 @@ async def verify_supabase_token(credentials: Annotated[HTTPAuthorizationCredenti
     
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication failed")
+    
+
+async def verify_cron_secret(x_cron_secret: str = Header(...)):
+    """Verify the cron secret key from headers"""
+    cron_secret_key = config.vars["cron_secret_key"]
+    if x_cron_secret != cron_secret_key:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid cron secret key")
+    
+    db = get_adm_db()
+    return db

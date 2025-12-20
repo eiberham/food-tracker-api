@@ -1,4 +1,4 @@
-from app.database import db
+from app.database import anon_db as db
 from app.schemas.auth import AuthenticationResponse, AuthenticationUser
 
 class AuthService:

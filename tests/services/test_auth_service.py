@@ -14,7 +14,7 @@ def test_login(db_mock):
             email="user@example.com",
         )
     )
-    with patch('app.database.db', db_mock):
+    with patch('app.database.anon_db', db_mock):
         auth_response = AuthService.login("user@example.com", "password")
 
     assert auth_response.access_token == "f4k3T0k3n"

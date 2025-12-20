@@ -58,3 +58,20 @@ create table public.document (
   created_at timestamp without time zone null default now(),
   constraint documents_pkey primary key (id)
 ) TABLESPACE pg_default;
+
+-- email_jobs --
+
+create table public.email_jobs (
+  id uuid not null default gen_random_uuid (),
+  idempotency_key text null,
+  user_id uuid not null,
+  period text not null,
+  payload jsonb not null,
+  status text not null,
+  attempts integer not null default 0,
+  last_error text null,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  constraint email_jobs_pkey primary key (id),
+  constraint email_jobs_idempotency_key_key unique (idempotency_key)
+) TABLESPACE pg_default;

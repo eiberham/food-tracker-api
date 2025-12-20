@@ -4,7 +4,7 @@ from supabase.client import Client
 from typing import Annotated
 from app.schemas.chat_msg import ChatMsg
 from app.services.chat_service import ChatService
-from app.database import get_db
+from app.database import get_auth_db
 
 router = APIRouter()
 
@@ -44,6 +44,6 @@ router = APIRouter()
     ```
     """
 )
-async def chat(request: ChatMsg, db: Annotated[Client, Depends(get_db)]):
+async def chat(request: ChatMsg, db: Annotated[Client, Depends(get_auth_db)]):
     stream = ChatService.chat(db, request.message)
     return StreamingResponse(stream, media_type="text/event-stream")

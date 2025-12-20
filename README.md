@@ -22,9 +22,10 @@ Features:
 - Supabase pgvecytor for document embeddings and semantic search
 - Agentic RAG ( tool invocation + retrieval )
 - Authentication and per-user data isolation
-- SQLAlchemy models + Pydantic schemas
+- Pydantic schemas
 - Chat endpoint with streaming to improve the perceived responsivenes by creating a faster, more fluid, and human-like interaction.
 - Guardrails for monitoring agent work
+- LangGraph workflows for monthly recommendations
 
 This is the list of existing endpoints:
 
@@ -90,7 +91,7 @@ This is the list of existing endpoints:
       <td>POST</td><td>/chat</td><td>Sends a message to the agent</td><td>Protected</td>
     </tr>
     <tr>
-      <td>GET</td><td>/insights</td><td>Gathers monthly insights per user</td><td>Hidden</td>
+      <td>POST</td><td>/insights</td><td>Gathers monthly insights per user</td><td>Hidden</td>
     </tr>
   </tbody>
 </table>
@@ -98,6 +99,40 @@ This is the list of existing endpoints:
 ### Workflow
 
 The GET /insights endpoint is a special endpoint that runs every month. It is triggered by a cron job and its sole purpose is to prepare recommendations for users based on the meals and symptoms caused by them in the last month.
+
+You can see the process summarized in the image below:
+
+![insights](insights.png "insights")
+
+#### The Process Flow
+
+1. Scheduled Trigger
+
+A cron job runs on the first of every month (automated scheduling)
+
+2. Insights Generation
+
+The cron job makes a POST /insights request to the API endpoint,
+which triggers the AnalystAgent and OutputAgent workflow.
+
+3. Dual Database Operations
+
+Upserts to email_jobs table: Stores the email job record with user info, content, and status
+Queue message: Sends a message to the email_jobs queue for processing
+
+4. Asynchronous Processing
+
+Jobs are queued for background processing (using PostgreSQL's pgmq - PostgreSQL Message Queue)
+
+5. Email Delivery
+
+A background worker processes the queue and sends the actual emails
+
+Key Architecture Benefits:
+- Reliability: Database record ensures no emails are lost
+- Idempotency: Upsert prevents duplicate emails for the same user/period
+- Scalability: Async queue handles email delivery without blocking the API
+- Monitoring: Database records allow tracking of email status (PENDING/SENT/FAILED)
 
 The diagram of the workflow is as follows:
 
