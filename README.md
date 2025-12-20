@@ -89,8 +89,54 @@ This is the list of existing endpoints:
     <tr>
       <td>POST</td><td>/chat</td><td>Sends a message to the agent</td><td>Protected</td>
     </tr>
+    <tr>
+      <td>GET</td><td>/insights</td><td>Gathers monthly insights per user</td><td>Hidden</td>
+    </tr>
   </tbody>
 </table>
+
+### Workflow
+
+The GET /insights endpoint is a special endpoint that runs every month. It is triggered by a cron job and its sole purpose is to prepare recommendations for users based on the meals and symptoms caused by them in the last month.
+
+The diagram of the workflow is as follows:
+
+![workflow](workflow.png "workflow")
+
+As you can see it's simply a graph with two nodes:
+
+#### Analysis Node(AnalystAgent)
+
+The analysis node is responsible for:
+
+**Data Analysis**: Acts as an expert histamine allergy data analyst that processes user data to identify patterns and correlations between foods consumed and symptoms experienced.
+
+**Tool Usage**: Has access to specialized tools (via create_tools(db)) that can query the database to gather necessary food and symptom data for a specific user.
+
+**Insight Generation**: Analyzes which foods a user should avoid and which ones they should consume more of based on their symptom patterns.
+
+**Data Processing**: Takes a user ID as input and performs deep analysis by invoking: "Which foods the user {user_id} should avoid and which ones they should eat more of based on their symptoms."
+
+**Raw Analysis Output**: Returns detailed analytical findings that serve as input for the next stage.
+
+#### Output Node(OutputAgent)
+
+The output node is responsible for:
+
+**Content Formatting**: Takes the raw analysis from the analyst and transforms it into user-friendly, digestible insights.
+
+**User Experience**: Ensures the recommendations are clear, actionable, and empathetic to users dealing with histamine allergies.
+
+**Content Constraints**: Applies specific formatting rules:
+
+Maximum 8 bullet points
+Each bullet point limited to 20 words
+Uses simple, accessible language
+Maintains a neutral, clear tone
+No Additional Analysis: Focuses solely on presentation and communication rather than performing new analysis.
+
+**Final Output**: Produces the final insights that will be delivered to the user.
+
 
 ### Deployment
 
