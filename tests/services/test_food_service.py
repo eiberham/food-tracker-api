@@ -39,7 +39,6 @@ def test_update_food(mock_get_food_by_id):
     db_mock.table().update().eq().select().execute.return_value = {"id": 1, "name": "Green Apple"}
     
     updated_food = FoodService.update_food(db_mock, food_id, payload)
-    print(updated_food)
     
     assert updated_food["name"] == "Green Apple"
 

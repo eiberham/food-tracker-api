@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from supabase.client import Client
 from typing import Annotated
 
@@ -10,7 +10,7 @@ router = APIRouter()
 
 @router.post("/", 
     include_in_schema=False,
-    status_code=200,
+    status_code=status.HTTP_200_OK,
     summary="Get Food Insights",
     description="Retrieve food insights based on analysis of symptoms."
 )

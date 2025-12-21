@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from supabase.client import Client
 from app.database import get_auth_db
+from json import loads, dumps
 from typing import Annotated
+from app.services.redis_service import RedisService
 from app.services.meal_service import MealService
 from app.schemas.meal import MealCreate, MealUpdate, MealResponse
 
@@ -12,8 +14,14 @@ router = APIRouter()
     summary="List All Meals",
     description="Retrieve a list of all meal entries stored in the system."
 )
-def list_meals(request: Request, db: Annotated[Client, Depends(get_auth_db)]):
-    meals = MealService.list_meals(db)
+async def list_meals(request: Request, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
+    cached = await RedisService.get(f"meals:{user.id}")
+    if cached:
+        return {"meals": loads(cached)}
+    meals = await MealService.list_meals(db)
+    await RedisService.set(f"meals:{user.id}", dumps(meals), expire=300)
     return {"meals": meals}
 
 @router.post("/", 
@@ -48,10 +56,16 @@ def update_meal(meal_id: int, meal: MealUpdate, request: Request, db: Annotated[
     summary="Get Meal by ID",
     description="Retrieve the details of a specific meal entry by its ID."
 )
-def read_meal(meal_id: int, request: Request, db: Annotated[Client, Depends(get_auth_db)]):
+async def read_meal(meal_id: int, request: Request, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
+    cached = await RedisService.get(f"meal:{user.id}:{meal_id}")
+    if cached:
+        return {"meal": loads(cached)}
     meal = MealService.get_meal(db, meal_id)
     if not meal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meal not found")
+    await RedisService.set(f"meal:{user.id}:{meal_id}", dumps(meal), expire=300)
     return {"meal": meal}
 
 @router.delete("/{meal_id}", 

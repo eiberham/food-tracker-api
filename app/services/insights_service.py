@@ -9,7 +9,7 @@ class Status(Enum):
 
 class InsightsService:
     @staticmethod
-    def upsert(db: Client, user_id, insights: str):
+    def upsert(db: Client, user_id: str, insights: str):
         try:
             today = date.today()
             period = today.strftime("%Y-%m")

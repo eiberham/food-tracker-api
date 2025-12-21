@@ -1,6 +1,7 @@
 import app.config as config
 from supabase import create_client
 from fastapi import Request
+import redis.asyncio as redis
 
 # Supabase anon client for user operations
 anon_db = create_client(
@@ -13,6 +14,12 @@ adm_db = create_client(
     config.vars["supabase_url"],
     config.vars["supabase_secret_key"]
 )
+
+cache = redis.from_url(config.vars['redis_url'], encoding="utf-8", decode_responses=True)
+
+def get_cache():
+    """Returns Redis client for caching"""
+    return cache
 
 def get_adm_db():
     """Returns Supabase admin client for admin operations"""

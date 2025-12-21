@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from json import loads, dumps
+from app.services.redis_service import RedisService
 from app.services.symptom_service import SymptomService
 from app.schemas.symptom import SymptomCreate, SymptomUpdate
 from app.database import get_auth_db
@@ -13,7 +15,13 @@ router = APIRouter()
     description="Retrieve a list of all symptom entries stored in the system."
 )
 async def list_symptoms(db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
+    cached = await RedisService.get(f"symptoms:{user.id}")
+    if cached:
+        return {"symptoms": loads(cached)}
     symptoms = SymptomService.list_symptoms(db)
+    await RedisService.set(f"symptoms:{user.id}", dumps(symptoms), expire=300)
     return symptoms
 
 @router.post("/", 
@@ -43,9 +51,15 @@ async def update_symptom(symptom_id: int, payload: SymptomUpdate, db: Annotated[
     description="Retrieve the details of a specific symptom entry by its ID."
 )
 async def get_symptom(symptom_id: int, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
+    cached = await RedisService.get(f"symptom:{user.id}:{symptom_id}")
+    if cached:
+        return {"symptom": loads(cached)}
     symptom = SymptomService.get_symptom_by_id(db, symptom_id)
     if not symptom:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Symptom not found")
+    await RedisService.set(f"symptom:{user.id}:{symptom_id}", dumps(symptom), expire=300)
     return {"symptom": symptom}
 
 @router.delete("/{symptom_id}", 
