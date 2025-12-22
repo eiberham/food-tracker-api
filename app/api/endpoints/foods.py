@@ -29,8 +29,11 @@ async def list_foods(db: Annotated[Client, Depends(get_auth_db)]):
     summary="Create a New Food",
     description="Add a new food item to the system."
 )
-def create_food(food: FoodCreate, db: Annotated[Client, Depends(get_auth_db)]):
+async def create_food(food: FoodCreate, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
     food = FoodService.create_food(db, food)
+    await RedisService.expire(f"foods:{user.id}", expire=0)
     return {"message": "Food created", "food": food}
 
 @router.put("/{food_id}", 
@@ -38,11 +41,14 @@ def create_food(food: FoodCreate, db: Annotated[Client, Depends(get_auth_db)]):
     summary="Update an Existing Food",
     description="Update the details of an existing food item by its ID."
 )
-def update_food(food_id: int, food: FoodUpdate, db: Annotated[Client, Depends(get_auth_db)]):
+async def update_food(food_id: int, food: FoodUpdate, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
     food = FoodService.update_food(db, food_id, food)
     if not food:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food not found")
-    
+    await RedisService.expire(f"food:{user.id}:{food_id}", expire=0)
+    await RedisService.expire(f"foods:{user.id}", expire=0)
     return {"message": f"Food with ID {food_id} updated", "food": food}
 
 @router.get("/{food_id}", 
@@ -67,8 +73,12 @@ async def read_food(food_id: int, db: Annotated[Client, Depends(get_auth_db)]):
     summary="Delete Food by ID",
     description="Delete a specific food item by its ID."
 )
-def delete_food(food_id: int, db: Annotated[Client, Depends(get_auth_db)]):
+async def delete_food(food_id: int, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
     success = FoodService.delete_food(db, food_id)
     if success:
+        await RedisService.expire(f"food:{user.id}:{food_id}", expire=0)
+        await RedisService.expire(f"foods:{user.id}", expire=0)
         return {"message": f"Food with ID {food_id} deleted"}
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food not found")

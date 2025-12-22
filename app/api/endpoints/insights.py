@@ -15,11 +15,11 @@ router = APIRouter()
     description="Retrieve food insights based on analysis of symptoms."
 )
 async def get_insights(db: Annotated[Client, Depends(get_adm_db)]):
-    users = db.auth.list_users().data
+    users = db.auth.admin.list_users()   
     for user in users:
         user_id = user.id
         workflow = InsightsWorkflow(user_id, db)
         graph = workflow.build_graph()
         initial_state = { "preliminary": "",  "insights": ""}
         result = graph.invoke(initial_state)
-        InsightsService.upsert(db, user_id, result['insights'])
+        InsightsService.upsert(db, user, result['insights'])

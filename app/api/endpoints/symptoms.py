@@ -31,7 +31,10 @@ async def list_symptoms(db: Annotated[Client, Depends(get_auth_db)]):
 )
 async def create_symptom(symptom: SymptomCreate, db: Annotated[Client, Depends(get_auth_db)]):
     try:
+        response = db.auth.get_user()
+        user = response.user
         symptom = SymptomService.create_symptom(db, symptom)
+        await RedisService.expire(f"symptoms:{user.id}", expire=0)
         return {"message": "Symptom created", "symptom": symptom}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -42,7 +45,11 @@ async def create_symptom(symptom: SymptomCreate, db: Annotated[Client, Depends(g
     description="Update the details of an existing symptom entry by its ID."
 )
 async def update_symptom(symptom_id: int, payload: SymptomUpdate, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
     symptom = SymptomService.update_symptom(db, symptom_id, payload)
+    await RedisService.expire(f"symptom:{user.id}:{symptom_id}", expire=0)
+    await RedisService.expire(f"symptoms:{user.id}", expire=0)
     return {"message": f"Symptom with ID {symptom_id} updated", "symptom": symptom}
 
 @router.get("/{symptom_id}", 
@@ -68,7 +75,11 @@ async def get_symptom(symptom_id: int, db: Annotated[Client, Depends(get_auth_db
     description="Delete a specific symptom entry by its ID."
 )
 async def delete_symptom(symptom_id: int, db: Annotated[Client, Depends(get_auth_db)]):
+    response = db.auth.get_user()
+    user = response.user
     symptom = SymptomService.delete_symptom(db, symptom_id)
     if not symptom:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Symptom not found")
+    await RedisService.expire(f"symptom:{user.id}:{symptom_id}", expire=0)
+    await RedisService.expire(f"symptoms:{user.id}", expire=0)
     return {"message": f"Symptom with ID {symptom_id} deleted"}

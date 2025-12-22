@@ -74,18 +74,22 @@ def get_tools(db):
             A string containing the search results.
         """
 
-        supabase_url = config.vars["supabase_url"]
-        supabase_secret_key = config.vars["supabase_secret_key"]
+        try:
+            supabase_url = config.vars["supabase_url"]
+            supabase_secret_key = config.vars["supabase_secret_key"]
 
-        model = SentenceTransformer('BAAI/bge-small-en')
-        vector = model.encode(query)
+            model = SentenceTransformer('BAAI/bge-small-en')
+            vector = model.encode(query)
 
-        retriever = RetrieverService(supabase_url, supabase_secret_key)
-        results = retriever.search(embedding=vector.tolist(), match_count=3)
+            retriever = RetrieverService(supabase_url, supabase_secret_key)
+            results = retriever.search(embedding=vector.tolist(), match_count=3)
 
-        context = "".join([result['content'] for result in results])
-        # Limit context to prevent token overflow
-        return context[:2000] + "..." if len(context) > 2000 else context
+            context = "".join([result['content'] for result in results])
+            # Limit context to prevent token overflow
+            return context[:2000] + "..." if len(context) > 2000 else context
+        
+        except Exception as e:
+            return f"Error during document search: {str(e)}"
 
     
     return [get_meals_of_date, get_symptoms_of_date, search_docs]
