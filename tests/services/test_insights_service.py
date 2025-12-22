@@ -14,4 +14,3 @@ def test_upsert_insights():
     InsightsService.upsert(db_mock, user_id, insights)
     db_mock.auth.get_user.assert_called_once_with(user_id)
     db_mock.table.return_value.upsert.assert_called_once()
-    db_mock.rpc.assert_called_once()

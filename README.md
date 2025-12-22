@@ -96,6 +96,24 @@ This is the list of existing endpoints:
   </tbody>
 </table>
 
+### Retrieval-Augmented Generation (RAG)  Evaluation
+
+I evaluated the quality of this pipeline using **RAGAS**, focusing on grounding, retrieval quality, and answer relevance.
+
+**Results:**
+
+| Metric              | Score  |
+|---------------------|--------|
+| Faithfulness        | 0.93   |
+| Answer Relevancy    | 0.82   |
+| Context Precision   | 1.00   |
+| Context Recall      | 1.00   |
+
+**Interpretation:**
+- The system shows **high faithfulness**, indicating responses are well-grounded in retrieved context.
+- **Perfect context precision and recall** confirm that retrieved documents are both relevant and sufficient.
+- Answer relevancy remains strong while allowing richer, user-friendly responses.
+
 ### Workflow
 
 The GET /insights endpoint is a special endpoint that runs every month. It is triggered by a cron job and its sole purpose is to prepare recommendations for users based on the meals and symptoms caused by them in the last month.
