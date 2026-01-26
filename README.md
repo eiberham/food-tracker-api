@@ -191,13 +191,47 @@ No Additional Analysis: Focuses solely on presentation and communication rather 
 **Final Output**: Produces the final insights that will be delivered to the user.
 
 
-### Deployment
+### :rocket: Deployment
 
-You can deploy it to railway by conteinerizing the application, pushing it to dockerhub and then pulling it from there.
+Before deployment you must containerize the application, the approach I followed was pushing it to dockerhub and then pulling it from there.
 
 ```shell
 docker buildx build --platform linux/amd64,linux/arm64 -t username/food-tracker:v1.0 --push .
 ```
+
+This project uses [Terraform](https://developer.hashicorp.com/terraform) to declaratively provision and manage the cloud infrastructure on Google Cloud Platform (GCP).
+
+The API is deployed as a containerized service on could run, providing a fully managed, serverless runtime with automatic scaling and zero server maintenance.
+
+#### Infrastructure as Code
+
+In the infra folder you will see that infrastructure is defined using [Terraform](https://developer.hashicorp.com/terraform), allowing the environment to be:
+
+- Reproducible
+- Version-controlled
+- Easy to review and modify
+
+The configuration provisions:
+
+- A cloud run service running the api container
+- Public access via IAM (roles/run.invoker)
+- Environment variables required by the application
+
+#### Deployment Flow
+
+1. Build and publish the docker image as mentioned above
+2. Authenticate with google cloud:
+  ```shell
+  gcloud auth login
+  gcloud auth application-default login
+  ```
+3. Initialize and apply the terraform configuration:
+  ```shell
+  terraform init
+  terraform apply
+  ```
+
+This setup allows the application to be deployed and updated with minimal operational overhead while remaining scalable and production-ready.
 
 ### How to run it locally ?
 

@@ -90,3 +90,9 @@ Thumbs.db
 .mypy_cache/
 test.py
 queries.txt
+
+# Terraform
+.terraform/
+terraform.tfvars
+*.tfstate
+*.tfstate.backup
